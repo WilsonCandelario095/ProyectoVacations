@@ -10,7 +10,7 @@ const PORT = 3000;
 
 app.get("/ping", (req, res) => {
     console.log("Ping recibido");
-    res.send("Pong desde Bun! + ");
+    res.send("Aquí estarán los diarios");
 });
 
 app.listen(PORT, () => {
