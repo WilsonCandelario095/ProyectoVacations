@@ -1,6 +1,6 @@
 import express from "express";
 
-import diariesRouter from "./routes/diaries.js";
+import diariesRouter from "./routes/diariesRoute.ts";
 
 
 //Primeras pruenas con Bun y Express
