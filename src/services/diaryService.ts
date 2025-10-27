@@ -33,3 +33,19 @@ export const addDiary = (newDiary : NewDiary) : DiaryEntry => {
     diaries.push(newDiaryEntry);
     return newDiaryEntry;
 };  
+
+export const updateDiary = (id: number, updatedDiary: NewDiary): DiaryEntry | undefined => {
+    const index = diaries.findIndex(diary => diary.id === id);
+    if (index !== -1) {
+        const updatedEntry = { id, ...updatedDiary };
+        diaries[index] = updatedEntry;
+        return updatedEntry;
+    }
+};
+  
+export const deleteDiary = (id: number): void => {
+    const index = diaries.findIndex(diary => diary.id === id);
+    if (index !== -1) {
+        diaries.splice(index, 1);
+    }       
+};
