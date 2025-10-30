@@ -30,6 +30,7 @@ model Role {
   idRole      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String   @unique
   description String?
+  active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   users       User[]
@@ -86,7 +87,7 @@ model Package {
   idPackage    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   providerId   String    @db.Uuid
   title        String
-  description  String
+  description  String?
   price        Decimal   @db.Decimal(10, 2)
   startDate    DateTime
   endDate      DateTime
