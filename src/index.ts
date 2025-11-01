@@ -1,12 +1,16 @@
-import express from "express";
+import express, { json } from "express";
+import morgan from "morgan";
+import roleRouter from "./routes/roleRoute";
 
-import diariesRouter from "./routes/diariesRoute.ts";
-
-
-//Primeras pruenas con Bun y Express
+//Primeras pruebas con Bun y Express
 const app = express();
 app.use (express.json()); // middleware que trae el body como json
 const PORT = 3000;
+
+
+app.use(morgan("dev"));
+// JSON parsing with error handling
+app.use(json({ limit: '10mb' }));
 
 app.get("/ping", (req, res) => {
     console.log("Ping recibido");
@@ -17,8 +21,12 @@ app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
 
-// Rutas
-app.use("/api/diaries", diariesRouter);
+// API Rutas
+app.use("/api", roleRouter);
 
 
-console.log("Hello via Bun!");
+app.get("/", (req, res) => {
+    console.log("Ping recibido");
+    res.send("Aquí estarán los diarios");
+});
+

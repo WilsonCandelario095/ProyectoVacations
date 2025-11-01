@@ -8,20 +8,20 @@ datasource db {
 }
 
 model User {
-  idUser      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  firstName   String
-  lastName    String
-  email       String   @unique
-  password    String
-  phone       String?
-  roleId      String   @db.Uuid
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  idUser    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName String
+  lastName  String
+  email     String   @unique
+  password  String
+  phone     String?
+  roleId    String   @db.Uuid
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  role        Role     @relation(fields: [roleId], references: [idRole])
-  customer    Customer?
-  provider    Provider?
+  role     Role      @relation(fields: [roleId], references: [idRole])
+  customer Customer?
+  provider Provider?
 
   @@map("users")
 }
@@ -40,30 +40,32 @@ model Role {
 
 model Customer {
   idCustomer String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId     String  @db.Uuid @unique
+  userId     String  @unique @db.Uuid
   country    String?
   city       String?
   address    String?
 
-  user       User     @relation(fields: [userId], references: [idUser])
-  bookings   Booking[]
-  reviews    Review[]
+  user     User      @relation(fields: [userId], references: [idUser])
+  bookings Booking[]
+  reviews  Review[]
 
   @@map("customers")
 }
 
 model Provider {
-  idProvider   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId       String   @db.Uuid @unique
-  companyName  String
-  description  String?
-  website      String?
-  active       Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  idProvider     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String   @unique @db.Uuid
+  companyName    String
+  description    String?
+  website        String?
+  indentifier    String   @unique
+  identifierType String
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  user         User     @relation(fields: [userId], references: [idUser])
-  packages     Package[]
+  user     User      @relation(fields: [userId], references: [idUser])
+  packages Package[]
 
   @@map("providers")
 }
@@ -84,18 +86,18 @@ model Destination {
 }
 
 model Package {
-  idPackage    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  providerId   String    @db.Uuid
-  title        String
-  description  String?
-  price        Decimal   @db.Decimal(10, 2)
-  startDate    DateTime
-  endDate      DateTime
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  active       Boolean   @default(true)
+  idPackage   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  providerId  String   @db.Uuid
+  title       String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  active      Boolean  @default(true)
 
-  provider     Provider  @relation(fields: [providerId], references: [idProvider])
+  provider     Provider             @relation(fields: [providerId], references: [idProvider])
   destinations PackageDestination[]
   bookings     Booking[]
   reviews      Review[]
@@ -104,58 +106,59 @@ model Package {
 }
 
 model PackageDestination {
-  packageId     String     @db.Uuid
-  destinationId String     @db.Uuid
+  packageId     String @db.Uuid
+  destinationId String @db.Uuid
 
-  package       Package    @relation(fields: [packageId], references: [idPackage])
-  destination   Destination @relation(fields: [destinationId], references: [idDestination])
+  package     Package     @relation(fields: [packageId], references: [idPackage])
+  destination Destination @relation(fields: [destinationId], references: [idDestination])
 
   @@id([packageId, destinationId])
   @@map("package_destinations")
 }
 
 model Booking {
-  idBooking   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  customerId  String    @db.Uuid
-  packageId   String    @db.Uuid
+  idBooking   String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerId  String        @db.Uuid
+  packageId   String        @db.Uuid
   status      BookingStatus @default(PENDING)
-  bookingDate DateTime  @default(now())
-  totalAmount Decimal?  @db.Decimal(10, 2)
+  active      Boolean       @default(true)
+  bookingDate DateTime      @default(now())
+  totalAmount Decimal?      @db.Decimal(10, 2)
 
-  customer    Customer  @relation(fields: [customerId], references: [idCustomer])
-  package     Package   @relation(fields: [packageId], references: [idPackage])
-  payments    Payment[]
+  customer Customer  @relation(fields: [customerId], references: [idCustomer])
+  package  Package   @relation(fields: [packageId], references: [idPackage])
+  payments Payment[]
 
-  reviews     Review[] 
+  reviews Review[]
 
   @@map("bookings")
 }
 
 model Payment {
-  idPayment   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingId   String    @db.Uuid
-  amount      Decimal   @db.Decimal(10, 2)
-  method      PaymentMethod
-  paidAt      DateTime  @default(now())
+  idPayment String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingId String        @db.Uuid
+  amount    Decimal       @db.Decimal(10, 2)
+  method    PaymentMethod
+  paidAt    DateTime      @default(now())
 
-  booking     Booking   @relation(fields: [bookingId], references: [idBooking])
+  booking Booking @relation(fields: [bookingId], references: [idBooking])
 
   @@map("payments")
 }
 
 model Review {
-  idReview    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  packageId   String   @db.Uuid
-  customerId  String   @db.Uuid @unique
-  rating      Int
-  comment     String?
-  createdAt   DateTime @default(now())
+  idReview   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  packageId  String   @db.Uuid
+  customerId String   @unique @db.Uuid
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
 
-  package     Package  @relation(fields: [packageId], references: [idPackage])
-  customer    Customer @relation(fields: [customerId], references: [idCustomer])
-  
-  booking     Booking?  @relation(fields: [bookingId], references: [idBooking])
-  bookingId   String?  @db.Uuid
+  package  Package  @relation(fields: [packageId], references: [idPackage])
+  customer Customer @relation(fields: [customerId], references: [idCustomer])
+
+  booking   Booking? @relation(fields: [bookingId], references: [idBooking])
+  bookingId String?  @db.Uuid
 
   @@map("reviews")
 }
@@ -172,4 +175,10 @@ enum PaymentMethod {
   DEBIT_CARD
   TRANSFER
   CASH
+}
+
+enum IdentifierType {
+  PASSPORT
+  NATIONAL_ID
+  DRIVER_LICENSE
 }

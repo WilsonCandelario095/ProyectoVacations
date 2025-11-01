@@ -3,7 +3,7 @@ import type { AddRoleDTO } from '../DTOs/AddRoleDTO';
 import prisma from '../db/prisma';
 
 export default class RoleController {
-    static async getAllRoles(req: Request, res: Response): Promise<any> {
+    static async getAllRoles(_req: Request, res: Response): Promise<any> {
         try {
             const roles = await prisma.role.findMany({
                 where: { active : true }, 

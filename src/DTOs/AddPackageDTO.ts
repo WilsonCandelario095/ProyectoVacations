@@ -1,4 +1,4 @@
-export interface AddPackage {
+export interface AddPackageDTO {
     title: string;
     description?: string;
     price: number;

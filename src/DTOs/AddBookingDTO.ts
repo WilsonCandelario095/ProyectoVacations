@@ -1,6 +1,6 @@
 import type { BookingStatus } from "@prisma/client";
 
-export interface AddBooking {
+export interface AddBookingDTO {
     status : BookingStatus;
 }
 
