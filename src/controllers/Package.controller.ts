@@ -42,14 +42,45 @@ export default class PackageController {
     }
 
     static async updatePackage(req: typeof request, res: typeof response): Promise<any> {
-        try {}
+        const { title, description, price } = req.body as AddPackageDTO;
+
+        try {
+            const packageFounded = await prisma.package.findFirst({
+                where: { title : title, active: true },
+            });
+
+            if (!packageFounded) {
+                return res.status(404).json({ message: "Package not found" });
+            }
+
+            const updatedPackage = await prisma.package.update({
+                where: { idPackage: packageFounded.idPackage },
+                data: { title, description, price },
+            });
+            return res.status(200).json(updatedPackage);
+        }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });
         }   
     }
 
     static async deletePackage(req: typeof request, res: typeof response): Promise<any> {
-        try {}
+
+        const { title } = req.body as AddPackageDTO;
+        try {
+            const packageFounded = await prisma.package.findFirst({
+                where: { title : title , active: true },
+            });
+            if (!packageFounded) {
+                return res.status(404).json({ message: "Package not found" });
+            }
+            await prisma.package.update({
+                where: { idPackage: packageFounded.idPackage },
+                data: { active: false },
+            });
+            return res.status(204).send().json ({message : 'Package deleted successfully'});
+
+        }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });
         }
