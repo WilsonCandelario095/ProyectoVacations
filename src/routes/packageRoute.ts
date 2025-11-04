@@ -1,5 +1,4 @@
 import { Router } from "express";
-import RoleController from "../controllers/Role.controller";
 import PackageController from "../controllers/Package.controller";
 
 const router: Router = Router();

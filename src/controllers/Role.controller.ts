@@ -14,7 +14,7 @@ export default class RoleController {
             });
             return res.status(200).json(roles);
         } catch (error) {
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({ message: 'Internal server error BOBO' });
         }
     }
 
