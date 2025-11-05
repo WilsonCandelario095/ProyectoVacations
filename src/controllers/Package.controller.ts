@@ -35,6 +35,7 @@ export default class PackageController {
                     providerId: provider!.idProvider,
                 },
             });
+            return res.status(201).json(newPackage);
         }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });

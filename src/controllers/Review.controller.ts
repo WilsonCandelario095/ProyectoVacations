@@ -1,9 +1,12 @@
 import type { Request, Response } from "express";
+import prisma from "../db/prisma";
+import type { AddReviewDTO } from "../DTOs/AddReviewDTO";
 
 export default class ReviewController {
     static async getAllReview(req: Request, res: Response): Promise<any> {
         try {
-            // Implementation to get all reviews
+            const reviews = await prisma.package.findMany({}); // Implementation to get all reviews
+            return res.status(200).json(reviews);
         }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });
@@ -12,7 +15,31 @@ export default class ReviewController {
 
     static async addNewReview(req: Request, res: Response): Promise<any> {
         try {
-            // Implementation to add a new review
+            const { rating, comment } = req.body as AddReviewDTO;
+
+            const packagee = await prisma.package.findFirst({
+                where: { active : true }, 
+                select: { idPackage: true },
+            }).then(pkg => pkg?.idPackage);
+
+            const customer = await prisma.customer.findFirst({
+                where: { active : true }, 
+                select: { idCustomer: true },
+            }).then(cust => cust?.idCustomer);
+
+            if (!packagee || !customer) {
+            return res.status(400).json({ message: "No se encontró un paquete o cliente activo." });
+            }
+
+            const newReview = await prisma.review.create({
+                data: {
+                    rating : rating,
+                    comment : comment,
+                    packageId :  packagee,
+                    customerId : customer,
+                },
+            });
+            return res.status(201).json(newReview);
         }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });

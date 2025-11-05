@@ -44,6 +44,7 @@ model Customer {
   country    String?
   city       String?
   address    String?
+  active     Boolean @default(true)
 
   user     User      @relation(fields: [userId], references: [idUser])
   bookings Booking[]
