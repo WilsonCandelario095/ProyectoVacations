@@ -5,7 +5,9 @@ import prisma from "../db/prisma";
 export default class PackageController {
     static async getAllPackages(req: typeof request, res: typeof response): Promise<any> {
         try {
-            const packages = await prisma.package.findMany({});
+            const packages = await prisma.package.findMany({
+                where: { active: true },
+            });
             return res.status(200).json(packages);
         }   
         catch (error) {
@@ -16,6 +18,13 @@ export default class PackageController {
     static async addNewPackage(req: typeof request, res: typeof response): Promise<any> {
         try {
             const { title, description, price } = req.body as AddPackageDTO;
+
+            const packageFound = await prisma.package.findFirst({
+                where: { title : title, active: true },
+            });
+            if (packageFound) {
+                return res.status(400).json({ message: `Package "${title}" already exists and is active.` });
+            }
 
             const provider = await prisma.provider.findFirst({
                 where: { active : true }, 
@@ -35,7 +44,7 @@ export default class PackageController {
                     providerId: provider!.idProvider,
                 },
             });
-            return res.status(201).json(newPackage);
+            return res.status(201).json({ message: `Package "${title}" created successfully.` });
         }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });
@@ -58,7 +67,7 @@ export default class PackageController {
                 where: { idPackage: packageFounded.idPackage },
                 data: { title, description, price },
             });
-            return res.status(200).json(updatedPackage);
+            return res.status(200).json({ message: `Package "${title}" updated successfully.` });
         }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });
@@ -79,7 +88,7 @@ export default class PackageController {
                 where: { idPackage: packageFounded.idPackage },
                 data: { active: false },
             });
-            return res.status(204).send().json ({message : 'Package deleted successfully'});
+            return res.status(204).send().json ({message : `Package "${title}" deleted successfully`});
 
         }
         catch (error) {

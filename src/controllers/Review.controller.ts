@@ -5,7 +5,12 @@ import type { AddReviewDTO } from "../DTOs/AddReviewDTO";
 export default class ReviewController {
     static async getAllReview(req: Request, res: Response): Promise<any> {
         try {
-            const reviews = await prisma.package.findMany({}); // Implementation to get all reviews
+            const reviews = await prisma.package.findMany({
+                where: { active: true },
+                include: {
+                    reviews: { where: { active: true } },
+                },
+            }); 
             return res.status(200).json(reviews);
         }
         catch (error) {
@@ -28,7 +33,7 @@ export default class ReviewController {
             }).then(cust => cust?.idCustomer);
 
             if (!packagee || !customer) {
-            return res.status(400).json({ message: "No se encontró un paquete o cliente activo." });
+            return res.status(400).json({ message: "Not founded package o customer active." });
             }
 
             const newReview = await prisma.review.create({
@@ -39,7 +44,7 @@ export default class ReviewController {
                     customerId : customer,
                 },
             });
-            return res.status(201).json(newReview);
+            return res.status(201).json({ message: `Review "${comment}" created successfully.` });
         }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });
@@ -60,7 +65,7 @@ export default class ReviewController {
                 where: { idReview: reviewFounded.idReview },
                 data: { rating, comment },
             });
-            return res.status(200).json(updatedReview);
+            return res.status(200).json({ message: `Review "${comment}" updated successfully.` });
         }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });
@@ -80,7 +85,7 @@ export default class ReviewController {
                 where: { idReview: reviewFounded.idReview },
                 data: { active: false },    
             });
-            return res.status(204).send();
+            return res.status(204).json({ message: `Review "${comment}" deleted successfully.` });
         }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });
