@@ -48,7 +48,19 @@ export default class ReviewController {
 
     static async updateReview(req: Request, res: Response): Promise<any> {
         try {
-            // Implementation to update a review
+            const { rating, comment } = req.body as AddReviewDTO;
+
+            const reviewFounded = await prisma.review.findFirst({
+                where: { active: true },
+            });
+            if (!reviewFounded) {
+                return res.status(404).json({ message: "Review not found" });
+            }
+            const updatedReview = await prisma.review.update({
+                where: { idReview: reviewFounded.idReview },
+                data: { rating, comment },
+            });
+            return res.status(200).json(updatedReview);
         }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });
@@ -57,7 +69,18 @@ export default class ReviewController {
 
     static async deleteReview(req: Request, res: Response): Promise<any> {
         try {
-            // Implementation to delete a review    
+            const { comment } = req.body as AddReviewDTO;
+            const reviewFounded = await prisma.review.findFirst({
+                where: { comment : comment, active : true },
+            });
+            if (!reviewFounded) {
+                return res.status(404).json({ message: "Review not found" });
+            }
+            await prisma.review.update({
+                where: { idReview: reviewFounded.idReview },
+                data: { active: false },    
+            });
+            return res.status(204).send();
         }
         catch (error) {
             return res.status(500).json({ message: "Internal server error" });

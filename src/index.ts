@@ -1,8 +1,9 @@
 import express, { json } from "express";
 import morgan from "morgan";
-import roleRouter from "./routes/roleRoute";
-import packageRouter from "./routes/packageRoute";
-import bookingRouter from "./routes/bookingRoute";
+import roleRouter from "./routes/role.route";
+import packageRouter from "./routes/package.route";
+import bookingRouter from "./routes/booking.route";
+import reviewRouter from "./routes/review.route";
 
 //Primeras pruebas con Bun y Express
 const app = express();
@@ -27,6 +28,7 @@ app.listen(PORT, () => {
 app.use("/api", roleRouter);
 app.use("/api", packageRouter);
 app.use("/api", bookingRouter);
+app.use("/api", reviewRouter)
 
 app.get("/", (req, res) => {
     console.log("Ping recibido");

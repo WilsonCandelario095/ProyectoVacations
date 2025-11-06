@@ -154,6 +154,7 @@ model Review {
   rating     Int
   comment    String?
   createdAt  DateTime @default(now())
+  active     Boolean  @default(true)
 
   package  Package  @relation(fields: [packageId], references: [idPackage])
   customer Customer @relation(fields: [customerId], references: [idCustomer])
