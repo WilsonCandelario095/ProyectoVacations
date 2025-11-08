@@ -1,5 +1,5 @@
 export interface AddDestinationDTO {
-    name: string;
+    nameDes: string;
     country: string;
     city: string;
     description?: string;

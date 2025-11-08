@@ -28,7 +28,7 @@ model User {
 
 model Role {
   idRole      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name        RoleName   @unique
+  nameRole    Roles    @unique
   description String?
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -73,7 +73,7 @@ model Provider {
 
 model Destination {
   idDestination String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String
+  nameDes       String
   country       String
   city          String?
   description   String?
@@ -185,7 +185,7 @@ enum IdentifierType {
   DRIVER_LICENSE
 }
 
-enum RoleName {
+enum Roles {
   ADMIN
   CUSTOMER
   PROVIDER
