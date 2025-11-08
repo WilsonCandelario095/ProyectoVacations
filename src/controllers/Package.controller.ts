@@ -1,9 +1,9 @@
-import { request, response } from "express";
+import type { Request, Response } from "express";
 import type { AddPackageDTO } from "../DTOs/AddPackageDTO.ts";
 import prisma from "../db/prisma";
 
 export default class PackageController {
-    static async getAllPackages(req: typeof request, res: typeof response): Promise<any> {
+    static async getAllPackages(req: Request, res: Response): Promise<any> {
         try {
             const packages = await prisma.package.findMany({
                 where: { active: true },
@@ -15,7 +15,7 @@ export default class PackageController {
         }   
     }
 
-    static async addNewPackage(req: typeof request, res: typeof response): Promise<any> {
+    static async addNewPackage(req: Request, res: Response): Promise<any> {
         try {
             const { title, description, price } = req.body as AddPackageDTO;
 
@@ -51,7 +51,7 @@ export default class PackageController {
         }   
     }
 
-    static async updatePackage(req: typeof request, res: typeof response): Promise<any> {
+    static async updatePackage(req: Request, res: Response): Promise<any> {
         const { title, description, price } = req.body as AddPackageDTO;
 
         try {
@@ -74,7 +74,7 @@ export default class PackageController {
         }   
     }
 
-    static async deletePackage(req: typeof request, res: typeof response): Promise<any> {
+    static async deletePackage(req: Request, res: Response): Promise<any> {
 
         const { title } = req.body as AddPackageDTO;
         try {

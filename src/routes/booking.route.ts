@@ -5,10 +5,10 @@ const router: Router = Router();
 
 const { addNewBooking, deleteBooking, getAllsBookings, updateBooking } = BookingController;
  
-router.get("/roles", getAllsBookings);
-router.post("/role", addNewBooking);
-router.put("/role", updateBooking);
-router.delete("/role", deleteBooking);
+router.get("/bookings", getAllsBookings);
+router.post("/booking", addNewBooking);
+router.put("/booking", updateBooking);
+router.delete("/booking", deleteBooking);
 
 
 export default router;

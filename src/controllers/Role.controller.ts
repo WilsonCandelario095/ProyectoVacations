@@ -22,10 +22,10 @@ export default class RoleController {
         try {
             const { roleName, description } = req.body as AddRoleDTO;
 
-            const roleFound = await prisma.role.findFirst({
+            const roleFounded = await prisma.role.findFirst({
                 where: { name : roleName, active: true }
             });
-            if (roleFound) {
+            if (roleFounded) {
                 return res.status(400).json({ message: `Role "${roleName}" already exists and is active.` });
             }
 
@@ -35,7 +35,7 @@ export default class RoleController {
                     description: description,
                 },
             });
-            return res.status(201).json(newRole);
+            return res.status(201).json({ message: `Role "${roleName}" created successfully.` });
         } catch (error) {
             return res.status(500).json({ message: 'Internal server error' });
         }

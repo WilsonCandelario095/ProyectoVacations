@@ -1,4 +1,4 @@
-import { IdentifierType } from "@prisma/client";
+import { IdentifierType, type Role } from "@prisma/client";
 
 export interface RegisterUserDTO {
     firstName: string;
@@ -8,4 +8,5 @@ export interface RegisterUserDTO {
     password: string;
     identifier: string;
     identifierType: IdentifierType;
+    role: Role;
 }
