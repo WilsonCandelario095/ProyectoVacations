@@ -1,4 +1,6 @@
+import { Roles } from "@prisma/client";
+
 export interface AddRoleDTO {
-    roleName: string;
+    roleName: Roles;
     description?: string;
 }   

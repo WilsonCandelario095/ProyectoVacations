@@ -23,7 +23,7 @@ export default class RoleController {
             const { roleName, description } = req.body as AddRoleDTO;
 
             const roleFounded = await prisma.role.findFirst({
-                where: { name : roleName, active: true }
+                where: { nameRole : roleName, active: true }
             });
             if (roleFounded) {
                 return res.status(400).json({ message: `Role "${roleName}" already exists and is active.` });
@@ -31,7 +31,7 @@ export default class RoleController {
 
             const newRole = await prisma.role.create({
                 data: {
-                    name: roleName,
+                    nameRole: roleName,
                     description: description,
                 },
             });
@@ -42,11 +42,11 @@ export default class RoleController {
     }
 
     static async updateRole(req: Request, res: Response): Promise<any> {    
-        const { roleName, description } = req.body as AddRoleDTO;
+        const { roleName , description } = req.body as AddRoleDTO;
 
         try {
             const roleFounded = await prisma.role.findFirst({
-                where : { name : roleName, active: true }
+                where : { nameRole : roleName , active: true }
             });
         
             if (!roleFounded) {
@@ -56,7 +56,7 @@ export default class RoleController {
             await prisma.role.update({
                 where: { idRole: roleFounded.idRole },
                 data: {
-                    name : roleName,
+                    nameRole : roleName,
                     description : description,
                 },
             }); 
@@ -71,7 +71,7 @@ export default class RoleController {
             const { roleName } = req.body as AddRoleDTO;
 
             const roleFounded = await prisma.role.findFirst({
-                where : { name : roleName, active: true }
+                where : { nameRole : roleName, active: true }
             });
             if (!roleFounded) {
                 return res.status(404).json({ message: `Role "${roleName}" not found or already inactive.` });
