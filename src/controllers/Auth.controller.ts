@@ -5,7 +5,22 @@ import type { RegisterUserDTO } from '../DTOs/RegisterUserDTO';
 import type { IdentifierType } from '@prisma/client';
 
 export default class AuthController {
-    // Authentication related methods would go here
+
+    static async getAllUsers(_req: Request, res: Response): Promise<any> {
+        try {
+            const users = await prisma.user.findMany({
+                where: { active : true },
+                include: {
+                    role: { select : { idRole: true, nameRole: true } },
+                },
+                orderBy: { createdAt: 'desc' }
+            });
+            return res.status(200).json(users);
+        } catch (error) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+    
     static async RegisterUser(req: Request, res: Response): Promise<any> {
         try {
             const { 
@@ -33,20 +48,35 @@ export default class AuthController {
                 return res.status(400).json({ message: `Role "${role}" does not exist.` });
             }
 
+            const securePassword = Bun.password.hashSync(password); 
+
             const newUser = await prisma.user.create({
                 data: {
                     firstName,
                     lastName,
                     email,
                     phone : phoneNumber,
-                    password,
+                    password : securePassword,
                     roleId : roleFounded.idRole,
                 },
             });
-            return res.status(201).json({ message: `User "${firstName}" registered successfully.` });
+
+            if (role === 'PROVIDER') {
+                try {
+                    await prisma.customer.create({
+                        data: {
+                            userId: newUser.idUser,
+                        },
+                    });
+                } catch (customerError) {
+                    console.error('Error creating profile customer for user:', customerError);
+                }
+            }
+
+            return res.status(201).json({ message: `User "${firstName} + ${lastName}" registered successfully.` });
         }
         catch (error) {
-            return res.status(500).json({ message: "Internal server error" });
+            return res.status(500).json( error instanceof Error ? error.message: "Internal server error" );
         }
     }
 }
