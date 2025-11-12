@@ -4,6 +4,7 @@ import roleRouter from "./routes/role.route";
 import packageRouter from "./routes/package.route";
 import bookingRouter from "./routes/booking.route";
 import reviewRouter from "./routes/review.route";
+import authRouter from "./routes/auth.route";
 
 //Primeras pruebas con Bun y Express
 const app = express();
@@ -29,6 +30,7 @@ app.use("/api", roleRouter);
 app.use("/api", packageRouter);
 app.use("/api", bookingRouter);
 app.use("/api", reviewRouter)
+app.use("/api", authRouter);
 
 app.get("/", (req, res) => {
     console.log("Ping recibido");

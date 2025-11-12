@@ -20,6 +20,24 @@ export default class AuthController {
             return res.status(500).json({ message: 'Internal server error' });
         }
     }
+
+    static async getUserById(req: Request, res: Response): Promise<any> {
+        try {
+            const { email } = req.params as { email: string };
+            const user = await prisma.user.findUnique({
+                where: { idUser : email, active: true },
+                include: {
+                    role: { select : { idRole: true, nameRole: true } },
+                },
+            });
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            return res.status(200).json(user);
+        } catch (error) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
     
     static async RegisterUser(req: Request, res: Response): Promise<any> {
         try {
