@@ -3,6 +3,7 @@ import prisma from '../db/prisma';
 import type { LoginUserDTO } from '../DTOs/LoginUserDTO';
 import type { RegisterUserDTO } from '../DTOs/RegisterUserDTO';
 import type { IdentifierType } from '@prisma/client';
+import { password } from 'bun';
 
 export default class AuthController {
 
@@ -55,7 +56,7 @@ export default class AuthController {
             });
 
             if (userFounded) {
-                return res.status(400).json({ message: `User "${firstName}" already Founded.` });
+                return res.status(400).json({ message: `User "${firstName}" already exist.` });
             }
 
             const roleFounded = await prisma.role.findFirst({
@@ -97,4 +98,35 @@ export default class AuthController {
             return res.status(500).json( error instanceof Error ? error.message: "Internal server error" );
         }
     }
-}
+
+    static async LoginUser(req: Request, res: Response): Promise<any>{
+        try{
+            const {email, password} = req.body as LoginUserDTO
+
+            const emailFounded = await prisma.user.findFirst({
+                where :{email : email}
+            })
+
+            if(!emailFounded){
+                return res.status(401).json({ message: "Invalid credentials" });
+            }
+
+            const verifyPassword = Bun.password.verifySync(
+                password,
+                emailFounded.password
+            )
+
+            if (!verifyPassword){
+                return res.status(401).json({ message: "Invalid credentials"})
+            }
+
+
+            return res.sendStatus(202);
+
+        }
+        catch (error){
+            return res
+            .status(500)
+            .json(error instanceof Error ? error.message : "Internal server error");
+        }
+    }}

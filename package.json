@@ -22,6 +22,7 @@
     "@prisma/client": "^6.18.0",
     "express": "^5.1.0",
     "init": "^0.1.2",
+    "jsonwebtoken": "^9.0.2",
     "migrate": "^2.1.0",
     "prisma": "^6.18.0"
   },
