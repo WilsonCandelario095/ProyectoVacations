@@ -2,8 +2,7 @@ import type { Response, Request } from 'express';
 import prisma from '../db/prisma';
 import type { LoginUserDTO } from '../DTOs/LoginUserDTO';
 import type { RegisterUserDTO } from '../DTOs/RegisterUserDTO';
-import type { IdentifierType } from '@prisma/client';
-import { password } from 'bun';
+import jwt from "jsonwebtoken";
 
 export default class AuthController {
 
@@ -100,8 +99,19 @@ export default class AuthController {
     }
 
     static async LoginUser(req: Request, res: Response): Promise<any>{
+
+        const {JWT_KEY} = process.env;
+
+        if(!JWT_KEY){
+            return res
+                .status(401)
+                .json({message: "JWT_KEY is not defined in .env file"})
+        }
+
+        const {email, password} = req.body as LoginUserDTO
+
+
         try{
-            const {email, password} = req.body as LoginUserDTO
 
             const emailFounded = await prisma.user.findFirst({
                 where :{email : email}
@@ -120,13 +130,54 @@ export default class AuthController {
                 return res.status(401).json({ message: "Invalid credentials"})
             }
 
-
-            return res.sendStatus(202);
-
+            //create JsonwebToken
+            const token = jwt.sign({
+                id: emailFounded.idUser,
+                idUser : emailFounded.idUser,
+                email : emailFounded.email,
+                firstName : emailFounded.firstName,
+                lastName : emailFounded.lastName,
+                roleId : emailFounded.roleId
+            }, JWT_KEY, {
+                expiresIn : "1h",
+            });
+            return res.status(202).cookie("token", token, { httpOnly: false, secure: false});
+            
         }
         catch (error){
             return res
             .status(500)
             .json(error instanceof Error ? error.message : "Internal server error");
         }
-    }}
+    
+    }
+
+    static logOut(req: Request, res : Response) : any{
+        res.clearCookie("token");
+        res.sendStatus(200);
+    }
+
+    static async deleteUser(req : Request, res: Response) : Promise <any> {
+        try{ 
+            const { idUser } = req.body;
+
+            const userFounded = await prisma.user.findFirst({
+                where : {idUser, active : true}
+            })
+
+            if(!userFounded) {
+                return res.status(404).json({ message : "User not found."});
+            }
+
+            await prisma.user.update({
+                where : {idUser : userFounded.idUser},
+                data: {active : false},
+            });
+            return res.status(500).json({ message : "User deleted (set inactive)"});
+        }catch(error){
+            return res.status(500).json({
+                message : error instanceof Error ? error.message : "Internal server error.",
+            });
+        }
+    }
+}

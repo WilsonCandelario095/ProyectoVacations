@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "express": "^5.1.0",
     "init": "^0.1.2",
     "jsonwebtoken": "^9.0.2",
