@@ -3,7 +3,8 @@ import { Router } from "express";
 
 const authRouter = Router();
 
-const { RegisterUser, getAllUsers, getUserById, LoginUser, deleteUser } = AuthController;
+const { RegisterUser, getAllUsers, getUserById, LoginUser, deleteUser } =
+  AuthController;
 
 authRouter.post("/register", RegisterUser);
 authRouter.get("/users", getAllUsers);
