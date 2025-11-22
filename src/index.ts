@@ -8,7 +8,7 @@ import authRouter from "./routes/auth.route";
 
 //Primeras pruebas con Bun y Express
 const app = express();
-app.use (express.json()); // middleware que trae el body como json
+app.use(express.json()); // middleware que trae el body como json
 const PORT = 3000;
 
 
